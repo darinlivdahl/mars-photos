@@ -1,0 +1,15 @@
+{
+  "name": "mars-photos",
+  "version": "1.0.0",
+  "description": "ExpressJS site using NASA API to display Mars rover photos.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Darin Livdahl",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.0"
+  }
+}

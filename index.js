@@ -1,3 +1,12 @@
+import express from "express";
+import bodyParser from "body-parser";
+import ejs from "ejs";
+
+const app = express();
+const port = 3000;
+
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.get("/", async (req,res) => {
     // res.send('Loading manifests...');
     for (let i = 0; i < roversArr.length; i++) {
@@ -33,4 +42,8 @@ app.get("/", async (req,res) => {
             break;
         }
     };
+});
+
+app.listen(port, () => {
+    console.log(`Server running on port ${port}.`);
 });
