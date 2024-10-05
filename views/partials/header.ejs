@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <% if (locals.app) { %>
+            <%= app.title %>
+        <% } %>
+    </title>
+    <link href="/styles/output.css" rel="stylesheet">
+</head>
+<body>
+
+    <% if (locals.app) { %>
+    <div class="bg-white py-24 sm:py-32">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8">
+            <div class="mx-auto max-w-2xl lg:text-center">
+                <h2 class="text-base font-semibold leading-7 text-indigo-600">
+                    <a href="/"><%= app.heading %></a>
+                </h2>
+                <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                    <%= app.heading2 %>
+                </p>
+                <% if (showIntro) { %>
+                <p class="mt-6 text-lg leading-8 text-gray-600">
+                    <%= app.intro %>
+                </p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <% } %>

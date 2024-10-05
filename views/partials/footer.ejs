@@ -1,0 +1,21 @@
+<div class="bg-white py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 lg:text-center">
+        <hr>
+        <p class="mt-4 font-sans text-sm antialiased">
+            Site created by <a href="https://darinlivdahl.co" class="text-indigo-600">Darin Livdahl</a> using the <a href="https://api.nasa.gov/" class="text-indigo-600">NASA API</a> for <a href="https://github.com/corincerami/mars-photo-api" class="text-indigo-600">Mars Rover Photos.</a>
+        </p>
+    </div>
+</div>
+
+<script>
+    /* Handle rover select change on Rover page */
+    const roverSelect = document.getElementById('rover-select');
+    if (roverSelect) {
+        roverSelect.addEventListener("change", (e) => {
+            const selectedRover = e.target.value;
+            window.location.pathname = '/rovers/' + selectedRover;
+        });
+    }
+</script>
+</body>
+</html>
