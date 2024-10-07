@@ -1,5 +1,5 @@
 {
-  "name": "mars-photos",
+  "name": "mars-rovers",
   "version": "1.0.0",
   "description": "ExpressJS site using NASA API to display Mars rover photos.",
   "engines": {
