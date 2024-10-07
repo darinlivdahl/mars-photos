@@ -8,6 +8,7 @@ const port = 3000;
 
 let roversManifest = {};
 let manifestsLoaded = false;
+const DEFAULT_CAMERA = null;
 
 const APP_DETAILS = {
     title: "Mars Rover Photos",
@@ -81,21 +82,58 @@ app.get("/", async (req,res) => {
                 break;
             }
         };
+    } else { // Display page with downloaded data
+        res.render("index.ejs", {
+            app: APP_DETAILS,
+            showIntro: true,
+            roversArr: ROVERS_ARR,
+            data: roversManifest
+        });
     }
 });
 
 app.get("/rovers/:roverName", (req,res) => {
+    const rover = req.params.roverName;
+    const manifest = roversManifest[rover];
+
     res.render("rover.ejs", {
         app: APP_DETAILS,
         showIntro: false,
+        selectedCamera: DEFAULT_CAMERA,
         roversArr: ROVERS_ARR,
-        rover: roversManifest[req.params.roverName],
-        selectedDate: roversManifest[req.params.roverName].maxDate,
-        photos: roversManifest[req.params.roverName].photos
+        rover: manifest,
+        selectedDate: manifest.maxDate,
+        photos: manifest.photos
     });
 });
 
-app.post("/rovers/:roverName/photos", (req,res) => {
+app.post("/rovers/:roverName/photos", async (req,res) => {
+    const selectedDate = req.body.earthDate;
+    const selectedCamera = req.body.camera || DEFAULT_CAMERA;
+
+    try {
+        const result = await axios.get(BASE_URL + '/rovers/' + req.params.roverName + '/photos', {
+            params: {
+                earth_date: selectedDate,
+                camera: selectedCamera
+            }
+        });
+        // console.log('result is: ' + JSON.stringify(result.data));
+
+        // Render rover page with rover data and queried photos
+        res.render("rover.ejs", {
+            app: APP_DETAILS,
+            showIntro: false,
+            selectedCamera: selectedCamera,
+            roversArr: ROVERS_ARR,
+            rover: roversManifest[req.params.roverName],
+            selectedDate: selectedDate || roversManifest[req.params.roverName].maxDate,
+            photos: result.data.photos
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.render("rover.ejs", { error: error.message });
+    }
 
 });
 
