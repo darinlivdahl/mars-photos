@@ -4,7 +4,7 @@ import ejs from "ejs";
 import axios from "axios";
 
 const app = express();
-const port = 3000;
+const localPort = 3000;
 
 let roversManifest = {};
 let manifestsLoaded = false;
@@ -137,6 +137,10 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
 
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}.`);
-});
+let port = process.env.PORT;
+if (port == null || port == "") {
+    port = 8000;
+} else {
+    port = localPort;
+}
+app.listen(port);
