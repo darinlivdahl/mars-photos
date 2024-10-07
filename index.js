@@ -137,10 +137,4 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
 
 });
 
-let port = process.env.PORT;
-if (port == null || port == "") {
-    port = 8000;
-} else {
-    port = localPort;
-}
-app.listen(8000);
+app.listen(process.env.PORT || localPort);
