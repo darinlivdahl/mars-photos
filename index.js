@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import ejs from "ejs";
+// import ejs from "ejs";
 import axios from "axios";
 
 const app = express();
@@ -18,7 +18,7 @@ const APP_DETAILS = {
 }
 
 const BASE_URL = "https://mars-photos.herokuapp.com/api/v1/";
-const ROVERS_ARR = ["perseverance","curiosity","opportunity","spirit"];
+const ROVERS_ARR = ["perseverance","curiosity"]; // "opportunity","spirit"
 const ROVERS_META = {
     perseverance: {
         description: "NASA’s Perseverance rover, launched in 2020, explores Mars’ Jezero Crater to study its geology, search for signs of ancient life, and collect soil samples for future return. It’s equipped with advanced tech for scientific exploration.",
@@ -28,14 +28,14 @@ const ROVERS_META = {
         description: "NASA’s Curiosity rover, launched in 2011, is a car-sized robot exploring Mars’ Gale Crater. Its mission is to study the planet’s climate and geology, search for signs of ancient life, and assess conditions for future human exploration.",
         bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NLF_1288_0781283332_488ECM_N0602014NCAM13288_01_195J01_1200.jpg"
     },
-    opportunity: {
-        description: "NASA’s Mars rover Opportunity, part of the Mars Exploration Rover (MER) mission, landed on the Red Planet in 2004. It explored Mars for over 14 years, far surpassing its expected 90-day mission. Opportunity made key discoveries about Mars’ geology and water history.",
-        bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NLF_1288_0781283489_496ECM_N0602014NCAM13288_10_195J01_1200.jpg"
-    },
-    spirit: {
-        description: "Spirit was one of NASA’s Mars Exploration Rovers, landing on Mars in January 2004. Designed for a 90-day mission, it operated for over 6 years, exploring Gusev Crater. It made significant discoveries about Mars’ geology before getting stuck in 2009.",
-        bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NRF_1288_0781283695_512ECM_N0602014NCAM13288_04_195J01_1200.jpg"
-    },
+    // opportunity: {
+    //     description: "NASA’s Mars rover Opportunity, part of the Mars Exploration Rover (MER) mission, landed on the Red Planet in 2004. It explored Mars for over 14 years, far surpassing its expected 90-day mission. Opportunity made key discoveries about Mars’ geology and water history.",
+    //     bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NLF_1288_0781283489_496ECM_N0602014NCAM13288_10_195J01_1200.jpg"
+    // },
+    // spirit: {
+    //     description: "Spirit was one of NASA’s Mars Exploration Rovers, landing on Mars in January 2004. Designed for a 90-day mission, it operated for over 6 years, exploring Gusev Crater. It made significant discoveries about Mars’ geology before getting stuck in 2009.",
+    //     bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NRF_1288_0781283695_512ECM_N0602014NCAM13288_04_195J01_1200.jpg"
+    // },
 }
 
 function formatDate(d) {
@@ -118,8 +118,7 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
                 camera: selectedCamera
             }
         });
-        // console.log('result is: ' + JSON.stringify(result.data));
-
+        
         // Render rover page with rover data and queried photos
         res.render("rover.ejs", {
             app: APP_DETAILS,
