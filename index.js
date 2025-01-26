@@ -1,12 +1,11 @@
 import express from "express";
 import bodyParser from "body-parser";
-// import ejs from "ejs";
 import axios from "axios";
 
 const app = express();
 const localPort = 3000;
 
-let roversManifest = {};
+let roverManifests = {};
 let manifestsLoaded = false;
 const DEFAULT_CAMERA = null;
 
@@ -18,7 +17,7 @@ const APP_DETAILS = {
 }
 
 const BASE_URL = "https://mars-photos.herokuapp.com/api/v1/";
-const ROVERS_ARR = ["perseverance","curiosity"]; // "opportunity","spirit"
+const ROVERS_ARR = ["perseverance","curiosity"];
 const ROVERS_META = {
     perseverance: {
         description: "NASA’s Perseverance rover, launched in 2020, explores Mars’ Jezero Crater to study its geology, search for signs of ancient life, and collect soil samples for future return. It’s equipped with advanced tech for scientific exploration.",
@@ -27,32 +26,43 @@ const ROVERS_META = {
     curiosity: {
         description: "NASA’s Curiosity rover, launched in 2011, is a car-sized robot exploring Mars’ Gale Crater. Its mission is to study the planet’s climate and geology, search for signs of ancient life, and assess conditions for future human exploration.",
         bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NLF_1288_0781283332_488ECM_N0602014NCAM13288_01_195J01_1200.jpg"
-    },
-    // opportunity: {
-    //     description: "NASA’s Mars rover Opportunity, part of the Mars Exploration Rover (MER) mission, landed on the Red Planet in 2004. It explored Mars for over 14 years, far surpassing its expected 90-day mission. Opportunity made key discoveries about Mars’ geology and water history.",
-    //     bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NLF_1288_0781283489_496ECM_N0602014NCAM13288_10_195J01_1200.jpg"
-    // },
-    // spirit: {
-    //     description: "Spirit was one of NASA’s Mars Exploration Rovers, landing on Mars in January 2004. Designed for a 90-day mission, it operated for over 6 years, exploring Gusev Crater. It made significant discoveries about Mars’ geology before getting stuck in 2009.",
-    //     bgImg: "https://mars.nasa.gov/mars2020-raw-images/pub/ods/surface/sol/01288/ids/edr/browse/ncam/NRF_1288_0781283695_512ECM_N0602014NCAM13288_04_195J01_1200.jpg"
-    // },
+    }
 }
 
 function formatDate(d) {
     return new Date(d).toDateString();
 }
 
+function getCameras(photos) {
+    const uniqueCameraNames = [];
+    const cameras = [];
+    // Loop through photos to get all available cameras used in photos argument
+    for (const photo of photos) {
+        if (!uniqueCameraNames.includes(photo.camera.name)) {
+            uniqueCameraNames.push(photo.camera.name);
+            cameras.push(
+                {
+                    name: photo.camera.name,
+                    full_name: photo.camera.full_name
+                }
+            );
+        }
+    }
+    // Sort camera names in alphabetical order
+    return cameras.sort((a, b) => a.name.localeCompare(b.name));
+}
+
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/", async (req,res) => {
-    // Loop through rovers array and call the latest_photos endpoint
+    // Loop through rovers array and call the manifests endpoint
     if (!manifestsLoaded) {
         for (let i = 0; i < ROVERS_ARR.length; i++) {
             try {
-                const result = await axios.get(BASE_URL + '/rovers/' + ROVERS_ARR[i] + '/latest_photos');
-                let manifest = result.data.latest_photos[0].rover;
-                roversManifest[ROVERS_ARR[i]] = {
+                const result = await axios.get(BASE_URL + '/manifestss/' + ROVERS_ARR[i]);
+                let manifest = result.data.photo_manifest;
+                roverManifests[ROVERS_ARR[i]] = {
                     shortName: manifest.name.toLowerCase(),
                     fullName: manifest.name,
                     launch: manifest.launch_date,
@@ -62,8 +72,6 @@ app.get("/", async (req,res) => {
                     status: manifest.status.toUpperCase(),
                     maxDate: manifest.max_date,
                     totalPhotos: manifest.total_photos.toLocaleString(),
-                    cameras: manifest.cameras,
-                    photos: result.data.latest_photos,
                     description: ROVERS_META[ROVERS_ARR[i]].description,
                     bg: ROVERS_META[ROVERS_ARR[i]].bgImg
                 };
@@ -73,12 +81,17 @@ app.get("/", async (req,res) => {
                         app: APP_DETAILS,
                         showIntro: true,
                         roversArr: ROVERS_ARR,
-                        data: roversManifest
+                        data: roverManifests
                     });
                 }
             } catch (error) {
                 console.error(error.message);
-                res.render("index.ejs", { error: error.message });
+                res.render("index.ejs", {
+                    app: APP_DETAILS,
+                    showIntro: true,
+                    roversArr: ROVERS_ARR,
+                    error: error.message
+                });
                 break;
             }
         };
@@ -87,25 +100,36 @@ app.get("/", async (req,res) => {
             app: APP_DETAILS,
             showIntro: true,
             roversArr: ROVERS_ARR,
-            data: roversManifest
+            data: roverManifests
         });
     }
 });
 
-app.get("/rovers/:roverName", (req,res) => {
+app.get("/rovers/:roverName", async (req,res) => {
     const rover = req.params.roverName;
-    const manifest = roversManifest[rover];
+    const manifest = roverManifests[rover];
+    try {
+        const result = await axios.get(BASE_URL + '/rovers/' + rover + "/latest_photos");
+        const latestPhotos = result.data.latest_photos;
+        const cameraArr = getCameras(latestPhotos);
 
-    res.render("rover.ejs", {
-        app: APP_DETAILS,
-        showIntro: false,
-        selectedCamera: DEFAULT_CAMERA,
-        roversArr: ROVERS_ARR,
-        rover: manifest,
-        selectedDate: manifest.maxDate,
-        photos: manifest.photos
-    });
+        res.render("rover.ejs", {
+            app: APP_DETAILS,
+            showIntro: false,
+            selectedCamera: DEFAULT_CAMERA,
+            roversArr: ROVERS_ARR,
+            rover: manifest,
+            selectedDate: manifest.maxDate,
+            maxDate: manifest.maxDate,
+            cameras: cameraArr,
+            photos: latestPhotos
+        });
+    } catch (error) {
+        console.error(error.message);
+        res.render("index.ejs", { error: error.message });
+    }
 });
+
 
 app.post("/rovers/:roverName/photos", async (req,res) => {
     const selectedDate = req.body.earthDate;
@@ -115,9 +139,17 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
         const result = await axios.get(BASE_URL + '/rovers/' + req.params.roverName + '/photos', {
             params: {
                 earth_date: selectedDate,
-                camera: selectedCamera
+                // camera: selectedCamera
             }
         });
+        
+        let photosArr = result.data.photos;
+        const cameraArr = getCameras(photosArr);
+
+        // Filter photo results by camera if selected
+        if (selectedCamera !== null) {
+            photosArr = photosArr.filter(photo => photo.camera.name === selectedCamera);
+        }
         
         // Render rover page with rover data and queried photos
         res.render("rover.ejs", {
@@ -125,9 +157,10 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
             showIntro: false,
             selectedCamera: selectedCamera,
             roversArr: ROVERS_ARR,
-            rover: roversManifest[req.params.roverName],
-            selectedDate: selectedDate || roversManifest[req.params.roverName].maxDate,
-            photos: result.data.photos
+            rover: roverManifests[req.params.roverName],
+            selectedDate: selectedDate || roverManifests[req.params.roverName].maxDate,
+            cameras: cameraArr,
+            photos: photosArr
         });
     } catch (error) {
         console.error(error.message);
