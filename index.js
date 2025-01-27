@@ -60,7 +60,7 @@ app.get("/", async (req,res) => {
     if (!manifestsLoaded) {
         for (let i = 0; i < ROVERS_ARR.length; i++) {
             try {
-                const result = await axios.get(BASE_URL + '/manifestss/' + ROVERS_ARR[i]);
+                const result = await axios.get(BASE_URL + '/manifests/' + ROVERS_ARR[i]);
                 let manifest = result.data.photo_manifest;
                 roverManifests[ROVERS_ARR[i]] = {
                     shortName: manifest.name.toLowerCase(),
@@ -85,12 +85,12 @@ app.get("/", async (req,res) => {
                     });
                 }
             } catch (error) {
-                console.error(error.message);
+                console.error(error);
                 res.render("index.ejs", {
                     app: APP_DETAILS,
-                    showIntro: true,
+                    showIntro: false,
                     roversArr: ROVERS_ARR,
-                    error: error.message
+                    error: error
                 });
                 break;
             }
@@ -125,8 +125,13 @@ app.get("/rovers/:roverName", async (req,res) => {
             photos: latestPhotos
         });
     } catch (error) {
-        console.error(error.message);
-        res.render("index.ejs", { error: error.message });
+        console.error(error);
+        res.render("index.ejs", {
+            app: APP_DETAILS,
+            showIntro: false,
+            roversArr: ROVERS_ARR,
+            error: error
+        });
     }
 });
 
@@ -163,8 +168,14 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
             photos: photosArr
         });
     } catch (error) {
-        console.error(error.message);
-        res.render("rover.ejs", { error: error.message });
+        console.error(error);
+        res.render("rover.ejs", {
+            app: APP_DETAILS,
+            showIntro: false,
+            roversArr: ROVERS_ARR,
+            error: error,
+            tryAgainUrl: req.url
+        });
     }
 
 });

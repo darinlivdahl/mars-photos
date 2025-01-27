@@ -1,6 +1,6 @@
 {
   "name": "mars-rovers",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "ExpressJS site using NASA API to display Mars rover photos.",
   "engines": {
     "node": "20.x"
@@ -25,6 +25,6 @@
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.9",
     "@types/ejs": "^3.1.5",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.0.0"
   }
 }
