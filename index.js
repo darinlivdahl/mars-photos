@@ -81,7 +81,8 @@ app.get("/", async (req,res) => {
                         app: APP_DETAILS,
                         showIntro: true,
                         roversArr: ROVERS_ARR,
-                        data: roverManifests
+                        data: roverManifests,
+                        showBackToTop: false
                     });
                 }
             } catch (error) {
@@ -90,7 +91,8 @@ app.get("/", async (req,res) => {
                     app: APP_DETAILS,
                     showIntro: false,
                     roversArr: ROVERS_ARR,
-                    error: error
+                    error: error,
+                    showBackToTop: false
                 });
                 break;
             }
@@ -100,7 +102,8 @@ app.get("/", async (req,res) => {
             app: APP_DETAILS,
             showIntro: true,
             roversArr: ROVERS_ARR,
-            data: roverManifests
+            data: roverManifests,
+            showBackToTop: false
         });
     }
 });
@@ -112,7 +115,6 @@ app.get("/rovers/:roverName", async (req,res) => {
         const result = await axios.get(BASE_URL + '/rovers/' + rover + "/latest_photos");
         const latestPhotos = result.data.latest_photos;
         const cameraArr = getCameras(latestPhotos);
-
         res.render("rover.ejs", {
             app: APP_DETAILS,
             showIntro: false,
@@ -122,7 +124,8 @@ app.get("/rovers/:roverName", async (req,res) => {
             selectedDate: manifest.maxDate,
             maxDate: manifest.maxDate,
             cameras: cameraArr,
-            photos: latestPhotos
+            photos: latestPhotos,
+            showBackToTop: true
         });
     } catch (error) {
         console.error(error);
@@ -130,7 +133,8 @@ app.get("/rovers/:roverName", async (req,res) => {
             app: APP_DETAILS,
             showIntro: false,
             roversArr: ROVERS_ARR,
-            error: error
+            error: error,
+            showBackToTop: false
         });
     }
 });
@@ -165,7 +169,8 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
             rover: roverManifests[req.params.roverName],
             selectedDate: selectedDate || roverManifests[req.params.roverName].maxDate,
             cameras: cameraArr,
-            photos: photosArr
+            photos: photosArr,
+            showBackToTop: true
         });
     } catch (error) {
         console.error(error);
@@ -174,7 +179,8 @@ app.post("/rovers/:roverName/photos", async (req,res) => {
             showIntro: false,
             roversArr: ROVERS_ARR,
             error: error,
-            tryAgainUrl: req.url
+            tryAgainUrl: req.url,
+            showBackToTop: false
         });
     }
 

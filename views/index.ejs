@@ -1,7 +1,7 @@
 <%- include("partials/header.ejs") %>
 
     <% if (locals.roversArr && locals.data) { %>
-        <main>
+        <main id="main">
             <% roversArr.forEach(r => { %>
             <div class="relative isolate overflow-hidden bg-gray-900 py-24 sm:py-32 mb-12">
                 <img src="<%= data[r].bg %>"
@@ -52,7 +52,7 @@
             <% }); %>
         </main>
     <% } else if (locals.error) { %>
-        <main class="grid min-h-full place-items-center bg-white px-6 py-6 sm:py-8 lg:px-8">
+        <main id="main" class="grid min-h-full place-items-center bg-white px-6 py-6 sm:py-8 lg:px-8">
             <div class="text-center">
                 <p class="text-base font-semibold text-indigo-600"><%= error.status %></p>
                 <h1 class="mt-4 text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-7xl"><%= error.name %></h1>

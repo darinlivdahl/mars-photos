@@ -20,3 +20,27 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
+
+/* Begin custom styles */
+
+@layer utilities {
+  footer .back-to-top {
+    position: fixed;
+    z-index: 500;
+    bottom: 2rem;
+    right: 2rem;
+    cursor: pointer;
+    background-color: white;
+    border-radius: 50%;
+    border-width: 0;
+  }
+
+  @media screen and (min-width: 1880px) {
+    footer .back-to-top {
+      bottom: 4rem;
+      right: 12vw;
+    }
+  }
+}
+
+/* End custom styles */

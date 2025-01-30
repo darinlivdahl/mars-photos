@@ -5,15 +5,42 @@
             Site created by <a href="https://darinlivdahl.co" class="text-indigo-600">Darin Livdahl</a> using the <a href="https://api.nasa.gov/" class="text-indigo-600">NASA API</a> for <a href="https://github.com/corincerami/mars-photo-api" class="text-indigo-600">Mars Rover Photos.</a>
         </p>
     </div>
+    <% if (showBackToTop) { %>
+    <!-- Back to top button -->
+    <button id="back-to-top" class="back-to-top" title="Back to top">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-14 text-indigo-600">
+            <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm.53 5.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l1.72-1.72v5.69a.75.75 0 0 0 1.5 0v-5.69l1.72 1.72a.75.75 0 1 0 1.06-1.06l-3-3Z" clip-rule="evenodd" />
+        </svg>      
+    </button>
+    <% } %>
 </footer>
 
 <script>
+    function smoothScroll(target) {
+        const element = document.getElementById(target);
+        if (element) {
+            window.scrollTo({
+                top: element.offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    }
+
     /* Handle rover select change on Rover page */
     const roverSelect = document.getElementById('rover-select');
     if (roverSelect) {
         roverSelect.addEventListener("change", (e) => {
             const selectedRover = e.target.value;
             window.location.pathname = '/rovers/' + selectedRover;
+        });
+    }
+
+    /* Handle smooth scroll back to top */
+    const backToTopButton = document.getElementById('back-to-top');
+    if (backToTopButton) {
+        backToTopButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            smoothScroll("main");
         });
     }
 </script>
